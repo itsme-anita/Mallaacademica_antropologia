@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Académica Antropología</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4f4;
+      margin: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .materia {
+      border-radius: 1rem;
+      padding: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      user-select: none;
+      min-height: 120px;
+    }
+    .materia:hover {
+      transform: scale(1.02);
+    }
+    .bloqueado {
+      background: gray;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .disponible {
+      background: #4B5AE3;
+    }
+    .aprobado {
+      background: #262E74;
+      text-decoration: line-through;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Académica Interactiva – Antropología</h1>
+  <div id="contenedor" class="grid"></div>
+
+  <script>
+    const materias = [
+      // Primer semestre
+      { id: "intro_antropologia", nombre: "Introducción a la antropología", semestre: 1 },
+      { id: "epistemologia", nombre: "Epistemología de las ciencias sociales", semestre: 1 },
+      { id: "geografia", nombre: "Geografía física y humana de Colombia", semestre: 1 },
+      { id: "lectura_escritura", nombre: "Lectura y escritura", semestre: 1 },
+      { id: "electiva_inst_1", nombre: "Electiva institucional I", semestre: 1 },
+      { id: "electiva_fac_1", nombre: "Electiva de facultad I", semestre: 1 },
+
+      // Segundo semestre
+      { id: "intro_arqueologia", nombre: "Introducción a la arqueología", semestre: 2 },
+      { id: "pensamiento_1", nombre: "Pensamiento antropológico I", semestre: 2 },
+      { id: "biologia", nombre: "Fundamentos de Biologia", semestre: 2 },
+      { id: "historia_colombia", nombre: "Historia de Colombia", semestre: 2 },
+      { id: "comunicacion_linguistica", nombre: "Comunicación lingüística", semestre: 2 },
+      { id: "electiva_inst_2", nombre: "Electiva institucional II", semestre: 2 },
+
+      // Tercer semestre
+      { id: "antropologia_colombia", nombre: "Antropología y arqueología de Colombia", semestre: 3, requiere: ["intro_antropologia", "intro_arqueologia"] },
+      { id: "pensamiento_2", nombre: "Pensamiento antropológico II", semestre: 3, requiere: ["pensamiento_1"] },
+      { id: "bioantropologia", nombre: "Bioantropología", semestre: 3, requiere: ["biologia"] },
+      { id: "ecologia", nombre: "Ecología y sociedad", semestre: 3, requiere: ["geografia", "biologia"] },
+      { id: "organizacion", nombre: "Organización social y parentesco", semestre: 3 },
+      { id: "lenguaje_sociedad", nombre: "Lenguaje y sociedad", semestre: 3 },
+
+      // Cuarto semestre
+      { id: "arqueologia_regional", nombre: "Antropología y arqueología regional", semestre: 4, requiere: ["intro_antropologia", "intro_arqueologia"] },
+      { id: "teoria_1", nombre: "Teoría social I", semestre: 4 },
+      { id: "arqueologia_social", nombre: "Arqueología social", semestre: 4, requiere: ["intro_arqueologia"] },
+      { id: "estadistica", nombre: "Estadística social", semestre: 4 },
+      { id: "electiva_fac_2", nombre: "Electiva de facultad II", semestre: 4 },
+      { id: "electiva_esp_1", nombre: "Electiva específica I", semestre: 4 },
+
+      // Quinto semestre
+      { id: "bioarqueologia", nombre: "Bioarqueología", semestre: 5 },
+      { id: "teoria_2", nombre: "Teoría social II", semestre: 5 },
+      { id: "metodos_arqueo", nombre: "Métodos y técnicas de investigación arqueológica", semestre: 5, requiere: ["antropologia_colombia"] },
+      { id: "metodos_sociales", nombre: "Métodos y técnicas de investigación en ciencias sociales", semestre: 5 },
+      { id: "electiva_fac_3", nombre: "Electiva de facultad III", semestre: 5 },
+      { id: "electiva_esp_2", nombre: "Electiva específica II", semestre: 5 },
+
+      // Sexto semestre
+      { id: "metodos_antropo", nombre: "Métodos y técnicas de investigación antropológica", semestre: 6, requiere: ["antropologia_colombia"] },
+      { id: "lab_arqueologia", nombre: "Laboratorio de arqueología", semestre: 6, requiere: ["antropologia_colombia"] },
+      { id: "teoria_contemp", nombre: "Teoría social contemporánea", semestre: 6 },
+      { id: "etica", nombre: "Ética", semestre: 6 },
+      { id: "electiva_esp_3", nombre: "Electiva específica III", semestre: 6 },
+
+      // Séptimo semestre
+      { id: "seminario_1", nombre: "Seminario de antropología I", semestre: 7 },
+      { id: "seminario_gestion_1", nombre: "Seminario gestión del patrimonio cultural I", semestre: 7 },
+      { id: "practica_etno", nombre: "Práctica de campo etnográfica", semestre: 7 },
+      { id: "practica_gestion_1", nombre: "Práctica de campo en gestión de patrimonio cultural I", semestre: 7 },
+      { id: "constitucion", nombre: "Constitución política", semestre: 7 },
+
+      // Octavo semestre
+      { id: "seminario_2", nombre: "Seminario de antropología II", semestre: 8, requiere: ["seminario_1"] },
+      { id: "practica_antropo", nombre: "Práctica de campo antropológica", semestre: 8 },
+      { id: "seminario_gestion_2", nombre: "Seminario gestión del patrimonio cultural II", semestre: 8, requiere: ["practica_gestion_1"] },
+      { id: "practica_gestion_2", nombre: "Práctica de campo en gestión de patrimonio cultural II", semestre: 8, requiere: ["practica_antropo"] },
+      { id: "medio_ambiente", nombre: "Medio ambiente", semestre: 8 },
+      { id: "electiva_esp_4", nombre: "Electiva específica IV", semestre: 8 },
+
+      // Noveno semestre
+      { id: "trabajo_grado_1", nombre: "Seminario de investigación - Trabajo de grado I", semestre: 9, requiere: ["practica_gestion_1", "practica_antropo"] },
+      { id: "electiva_esp_5", nombre: "Electiva específica V", semestre: 9 },
+
+      // Décimo semestre
+      { id: "trabajo_grado_2", nombre: "Seminario de investigación - Trabajo de grado 2", semestre: 10, requiere: ["trabajo_grado_1", "practica_gestion_1", "practica_antropo"] },
+      { id: "electiva_esp_6", nombre: "Electiva específica VI", semestre: 10 },
+    ];
+
+    const estadoMaterias = JSON.parse(localStorage.getItem("estadoMaterias") || "{}");
+
+    function puedeDesbloquear(materia) {
+      if (!materia.requiere) return true;
+      return materia.requiere.every(id => estadoMaterias[id] === "aprobado");
+    }
+
+    function renderMaterias() {
+      const contenedor = document.getElementById("contenedor");
+      contenedor.innerHTML = "";
+      materias.forEach(m => {
+        const estado = estadoMaterias[m.id] || (puedeDesbloquear(m) ? "disponible" : "bloqueado");
+        const div = document.createElement("div");
+        div.className = `materia ${estado}`;
+        div.textContent = m.nombre;
+        div.onclick = () => {
+          if (estadoMaterias[m.id] === "aprobado") {
+            delete estadoMaterias[m.id];
+          } else {
+            estadoMaterias[m.id] = "aprobado";
+          }
+          localStorage.setItem("estadoMaterias", JSON.stringify(estadoMaterias));
+          renderMaterias();
+        };
+        contenedor.appendChild(div);
+      });
+    }
+
+    renderMaterias();
+  </script>
+</body>
+</html>
